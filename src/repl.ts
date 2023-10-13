@@ -20,6 +20,7 @@ const preEval: REPLEval = async function (code, context, filename, callback) {
 		loader: 'ts',
 		tsconfigRaw: {
 			compilerOptions: {
+				experimentalDecorators: true,
 				preserveValueImports: true
 			}
 		},

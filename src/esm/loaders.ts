@@ -345,8 +345,18 @@ export const load: LoadHook = async function (url, context, defaultLoad) {
 		loaded.format === 'json' ||
 		tsExtensionsPattern.test(url)
 	) {
+		const matched = fileMatcher?.(filePath) as Exclude<
+			TransformOptions['tsconfigRaw'],
+			string
+		>;
 		const transformed = await transform(code, filePath, {
-			tsconfigRaw: fileMatcher?.(filePath) as TransformOptions['tsconfigRaw']
+			tsconfigRaw: {
+				...matched,
+				compilerOptions: {
+					...matched?.compilerOptions,
+					experimentalDecorators: true
+				}
+			}
 		});
 
 		return {

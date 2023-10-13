@@ -9,6 +9,7 @@ function patchEval(nodeRepl: REPLServer) {
 				loader: 'ts',
 				tsconfigRaw: {
 					compilerOptions: {
+						experimentalDecorators: true,
 						preserveValueImports: true
 					}
 				},
