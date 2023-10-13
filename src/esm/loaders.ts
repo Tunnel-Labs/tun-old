@@ -73,7 +73,7 @@ const _globalPreload: GlobalPreloadHook = ({ port }) => {
 
 	return `
 	const require = getBuiltin('module').createRequire("${import.meta.url}");
-	require('tun/source-map').installSourceMapSupport(port);
+	require('@tunnel/tun/source-map').installSourceMapSupport(port);
 	if (process.send) {
 		port.addListener('message', (message) => {
 			if (message.type === 'dependency') {
