@@ -102,8 +102,18 @@ const transformer = (module: Module, filePath: string) => {
 			code = applySourceMap(transformed, filePath);
 		}
 	} else {
+		const matched = fileMatcher?.(filePath) as Exclude<
+			TransformOptions['tsconfigRaw'],
+			string
+		>;
 		const transformed = transformSync(code, filePath, {
-			tsconfigRaw: fileMatcher?.(filePath) as TransformOptions['tsconfigRaw']
+			tsconfigRaw: {
+				...matched,
+				compilerOptions: {
+					...matched?.compilerOptions,
+					experimentalDecorators: true
+				}
+			}
 		});
 
 		code = applySourceMap(transformed, filePath);
@@ -166,14 +176,14 @@ Module._resolveFilename = (request, parent, isMain, options) => {
 		request = request.slice(5);
 	}
 
-	if (isGlobSpecifier(request)) {
+	if (parent && isGlobSpecifier(request)) {
 		return getGlobfilePath({
 			globfileModuleSpecifier: request,
 			importerFilepath: parent.filename
 		});
 	}
 
-	if (parent.filename !== null && request.startsWith('~')) {
+	if (parent && parent.filename !== null && request.startsWith('~')) {
 		request = expandTildeImport({
 			importSpecifier: request,
 			importerFilepath: parent.filename

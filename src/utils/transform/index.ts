@@ -35,7 +35,17 @@ export function transformSync(
 		define,
 		banner: '(()=>{',
 		footer: '})()',
-		...extendOptions
+		...extendOptions,
+		tsconfigRaw:
+			typeof extendOptions?.tsconfigRaw === 'string'
+				? extendOptions?.tsconfigRaw
+				: {
+						...extendOptions?.tsconfigRaw,
+						compilerOptions: {
+							...extendOptions?.tsconfigRaw?.compilerOptions,
+							experimentalDecorators: true
+						}
+				  }
 	});
 
 	const hash = sha1(code + JSON.stringify(esbuildOptions) + esbuildVersion);
