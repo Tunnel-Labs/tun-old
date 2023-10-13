@@ -157,6 +157,10 @@ const transformer = (module: Module, filePath: string) => {
 Object.defineProperty(extensions, '.mjs', {
 	value: transformer,
 
+	// We set this property as enumerable so other packages can overwrite it if needed instead of erroring
+	writable: true,
+	configurable: true,
+
 	// Prevent Object.keys from detecting these extensions
 	// when CJS loader iterates over the possible extensions
 	enumerable: false
