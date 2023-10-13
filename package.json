@@ -20,6 +20,9 @@
   "bin": {
 		"tun": "./dist/cli.mjs"
 	},
+	"scripts": {
+		"build": "pkgroll"
+	},
   "dependencies": {
     "esbuild": "~0.18.20",
     "get-monorepo-root": "^1.1.0",
