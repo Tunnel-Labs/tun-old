@@ -56,11 +56,11 @@ type resolve = (
 
 const isolatedLoader = compareNodeVersion([20, 0, 0]) >= 0;
 
-type SendToParent = (data: { type: 'dependency'; path: string }) => void;
+// type SendToParent = (data: { type: 'dependency'; path: string }) => void;
 
-let sendToParent: SendToParent | undefined = process.send
-	? process.send.bind(process)
-	: undefined;
+// let sendToParent: SendToParent | undefined = process.send
+// 	? process.send.bind(process)
+// 	: undefined;
 
 /**
  * Technically globalPreload is deprecated so it should be in loaders-deprecated
@@ -69,18 +69,18 @@ let sendToParent: SendToParent | undefined = process.send
 let mainThreadPort: MessagePort | undefined;
 const _globalPreload: GlobalPreloadHook = ({ port }) => {
 	mainThreadPort = port;
-	sendToParent = port.postMessage.bind(port);
+	// sendToParent = port.postMessage.bind(port);
 
 	return `
 	const require = getBuiltin('module').createRequire("${import.meta.url}");
 	require('@tunnel/tun/source-map').installSourceMapSupport(port);
-	if (process.send) {
-		port.addListener('message', (message) => {
-			if (message.type === 'dependency') {
-				process.send(message);
-			}
-		});
-	}
+	// if (process.send) {
+	// 	port.addListener('message', (message) => {
+	// 		if (message.type === 'dependency') {
+	// 			process.send(message);
+	// 		}
+	// 	});
+	// }
 	port.unref(); // Allows process to exit without waiting for port to close
 	`;
 };
@@ -285,12 +285,12 @@ export const resolve: resolve = async function (
 };
 
 export const load: LoadHook = async function (url, context, defaultLoad) {
-	if (sendToParent) {
-		sendToParent({
-			type: 'dependency',
-			path: url
-		});
-	}
+	// if (sendToParent) {
+	// 	sendToParent({
+	// 		type: 'dependency',
+	// 		path: url
+	// 	});
+	// }
 
 	// If the file doesn't have an extension, we should return the source directly
 	if (url.startsWith('file://') && path.extname(url) === '') {
