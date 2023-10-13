@@ -16,6 +16,7 @@ import { installSourceMapSupport } from '../source-map';
 import { transformSync, transformDynamicImport } from '../utils/transform';
 import { resolveTsPath } from '../utils/resolve-ts-path';
 import { compareNodeVersion } from '../utils/compare-node-version';
+import { isFileEsmSync } from 'is-file-esm-ts';
 
 const isRelativePathPattern = /^\.{1,2}\//;
 const isTsFilePatten = /\.[cm]?tun?$/;
@@ -95,6 +96,20 @@ const transformer = (module: Module, filePath: string) => {
 	// }
 
 	let code = fs.readFileSync(filePath, 'utf8');
+
+	if (filePath.includes('/node_modules/')) {
+		try {
+			if (isFileEsmSync(filePath)) {
+				const transformed = transformSync(code, filePath, { format: 'cjs' });
+				code = applySourceMap(transformed, filePath);
+			}
+		} catch {
+			// Ignore invalid file extension issues
+		}
+
+		module._compile(code, filePath);
+		return;
+	}
 
 	if (filePath.endsWith('.cjs') && nodeSupportsImport) {
 		const transformed = transformDynamicImport(filePath, code);
