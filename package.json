@@ -1,6 +1,6 @@
 {
 	"name": "@tunnel/tun",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "TypeScript Run (tun): Node.js enhanced with esbuild to run TypeScript & ESM files + tilde-imports + glob-imports",
 	"type": "module",
 	"files": [
@@ -21,7 +21,8 @@
 		"tun": "./dist/cli.mjs"
 	},
 	"scripts": {
-		"build": "pkgroll"
+		"build": "pkgroll",
+		"prepublish": "npm run build"
 	},
 	"dependencies": {
 		"esbuild": "~0.18.20",
