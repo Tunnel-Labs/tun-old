@@ -34,10 +34,8 @@ export function run(
 			'--require',
 			require.resolve('./preflight.cjs'),
 
-			'--import',
-			`data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register(${JSON.stringify(
-				pathToFileURL(require.resolve('./loader.mjs')).toString()
-			)}, pathToFileURL("./"));`,
+			'--loader',
+			pathToFileURL(require.resolve('./loader.mjs')).toString(),
 
 			...argv
 		],
