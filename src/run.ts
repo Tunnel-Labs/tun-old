@@ -8,14 +8,14 @@ export function run(
 		noCache?: boolean;
 		tsconfigPath?: string;
 		ipc?: boolean;
-	},
+	}
 ) {
 	const environment = { ...process.env };
 	const stdio: StdioOptions = [
 		'inherit', // stdin
 		'inherit', // stdout
 		'inherit', // stderr
-		'ipc', // parent-child communication
+		'ipc' // parent-child communication
 	];
 
 	if (options) {
@@ -36,14 +36,14 @@ export function run(
 
 			'--import',
 			`data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register(${JSON.stringify(
-				pathToFileURL(require.resolve('./loader.mjs')).toString(),
+				pathToFileURL(require.resolve('./loader.mjs')).toString()
 			)}, pathToFileURL("./"));`,
 
-			...argv,
+			...argv
 		],
 		{
 			stdio,
-			env: environment,
-		},
+			env: environment
+		}
 	);
 }

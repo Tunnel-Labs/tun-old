@@ -36,7 +36,7 @@ class FileCache<ReturnType> extends Map<string, ReturnType> {
 			return {
 				time: Number(time),
 				key,
-				fileName,
+				fileName
 			};
 		});
 
@@ -50,7 +50,7 @@ class FileCache<ReturnType> extends Map<string, ReturnType> {
 			return memoryCacheHit;
 		}
 
-		const diskCacheHit = this.cacheFiles.find(cache => cache.key === key);
+		const diskCacheHit = this.cacheFiles.find((cache) => cache.key === key);
 		if (!diskCacheHit) {
 			return;
 		}
@@ -66,7 +66,7 @@ class FileCache<ReturnType> extends Map<string, ReturnType> {
 					this.cacheFiles.splice(index, 1);
 				},
 
-				() => {},
+				() => {}
 			);
 			return;
 		}
@@ -87,13 +87,12 @@ class FileCache<ReturnType> extends Map<string, ReturnType> {
 			 */
 			const time = getTime();
 
-			fs.promises.writeFile(
-				path.join(this.cacheDirectory, `${time}-${key}`),
-				JSON.stringify(value),
-			).catch(
-
-				() => {},
-			);
+			fs.promises
+				.writeFile(
+					path.join(this.cacheDirectory, `${time}-${key}`),
+					JSON.stringify(value)
+				)
+				.catch(() => {});
 		}
 
 		return this;
@@ -104,18 +103,15 @@ class FileCache<ReturnType> extends Map<string, ReturnType> {
 
 		for (const cache of this.cacheFiles) {
 			// Remove if older than ~7 days
-			if ((time - cache.time) > 7) {
-				fs.promises.unlink(path.join(this.cacheDirectory, cache.fileName)).catch(
-
-					() => {},
-				);
+			if (time - cache.time > 7) {
+				fs.promises
+					.unlink(path.join(this.cacheDirectory, cache.fileName))
+					.catch(() => {});
 			}
 		}
 	}
 }
 
-export default (
-	process.env.ESBK_DISABLE_CACHE
-		? new Map<string, Transformed>()
-		: new FileCache<Transformed>()
-);
+export default process.env.ESBK_DISABLE_CACHE
+	? new Map<string, Transformed>()
+	: new FileCache<Transformed>();

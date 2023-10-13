@@ -15,16 +15,15 @@ const checkEsModule = `.then((mod)=>{
 	// eslint-disable-next-line unicorn/prefer-string-replace-all
 	.replace(/[\n\t]+/g, '');
 
-export function transformDynamicImport(
-	filePath: string,
-	code: string,
-) {
+export function transformDynamicImport(filePath: string, code: string) {
 	// Naive check
 	if (!code.includes('import')) {
 		return;
 	}
 
-	const dynamicImports = parseEsm(code)[0].filter(maybeDynamic => maybeDynamic.d > -1);
+	const dynamicImports = parseEsm(code)[0].filter(
+		(maybeDynamic) => maybeDynamic.d > -1
+	);
 
 	if (dynamicImports.length === 0) {
 		return;
@@ -40,7 +39,7 @@ export function transformDynamicImport(
 		code: magicString.toString(),
 		map: magicString.generateMap({
 			source: filePath,
-			hires: true,
-		}) as unknown as RawSourceMap,
+			hires: true
+		}) as unknown as RawSourceMap
 	};
 }

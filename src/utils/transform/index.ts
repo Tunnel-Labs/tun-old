@@ -3,7 +3,7 @@ import type { TransformOptions } from 'esbuild';
 import {
 	transform as esbuildTransform,
 	transformSync as esbuildTransformSync,
-	version as esbuildVersion,
+	version as esbuildVersion
 } from 'esbuild';
 import { sha1 } from '../sha1';
 import { transformDynamicImport } from './transform-dynamic-import';
@@ -11,7 +11,7 @@ import cache from './cache';
 import {
 	applyTransformersSync,
 	applyTransformers,
-	type Transformed,
+	type Transformed
 } from './apply-transformers';
 import { getEsbuildOptions } from './get-esbuild-options';
 
@@ -21,7 +21,7 @@ export { transformDynamicImport } from './transform-dynamic-import';
 export function transformSync(
 	code: string,
 	filePath: string,
-	extendOptions?: TransformOptions,
+	extendOptions?: TransformOptions
 ): Transformed {
 	const define: { [key: string]: string } = {};
 
@@ -35,32 +35,28 @@ export function transformSync(
 		define,
 		banner: '(()=>{',
 		footer: '})()',
-		...extendOptions,
+		...extendOptions
 	});
 
 	const hash = sha1(code + JSON.stringify(esbuildOptions) + esbuildVersion);
 	let transformed = cache.get(hash);
 
 	if (!transformed) {
-		transformed = applyTransformersSync(
-			filePath,
-			code,
-			[
+		transformed = applyTransformersSync(filePath, code, [
+			// eslint-disable-next-line @typescript-eslint/no-shadow
+			(filePath, code) => {
 				// eslint-disable-next-line @typescript-eslint/no-shadow
-				(filePath, code) => {
-					// eslint-disable-next-line @typescript-eslint/no-shadow
-					const transformed = esbuildTransformSync(code, esbuildOptions);
-					if (esbuildOptions.sourcefile !== filePath) {
-						transformed.map = transformed.map.replace(
-							JSON.stringify(esbuildOptions.sourcefile),
-							JSON.stringify(filePath),
-						);
-					}
-					return transformed;
-				},
-				transformDynamicImport,
-			] as const,
-		);
+				const transformed = esbuildTransformSync(code, esbuildOptions);
+				if (esbuildOptions.sourcefile !== filePath) {
+					transformed.map = transformed.map.replace(
+						JSON.stringify(esbuildOptions.sourcefile),
+						JSON.stringify(filePath)
+					);
+				}
+				return transformed;
+			},
+			transformDynamicImport
+		] as const);
 
 		cache.set(hash, transformed);
 	}
@@ -79,37 +75,33 @@ export function transformSync(
 export async function transform(
 	code: string,
 	filePath: string,
-	extendOptions?: TransformOptions,
+	extendOptions?: TransformOptions
 ): Promise<Transformed> {
 	const esbuildOptions = getEsbuildOptions({
 		format: 'esm',
 		sourcefile: filePath,
-		...extendOptions,
+		...extendOptions
 	});
 
 	const hash = sha1(code + JSON.stringify(esbuildOptions) + esbuildVersion);
 	let transformed = cache.get(hash);
 
 	if (!transformed) {
-		transformed = await applyTransformers(
-			filePath,
-			code,
-			[
+		transformed = await applyTransformers(filePath, code, [
+			// eslint-disable-next-line @typescript-eslint/no-shadow
+			async (filePath, code) => {
 				// eslint-disable-next-line @typescript-eslint/no-shadow
-				async (filePath, code) => {
-					// eslint-disable-next-line @typescript-eslint/no-shadow
-					const transformed = await esbuildTransform(code, esbuildOptions);
-					if (esbuildOptions.sourcefile !== filePath) {
-						transformed.map = transformed.map.replace(
-							JSON.stringify(esbuildOptions.sourcefile),
-							JSON.stringify(filePath),
-						);
-					}
-					return transformed;
-				},
-				transformDynamicImport,
-			] as const,
-		);
+				const transformed = await esbuildTransform(code, esbuildOptions);
+				if (esbuildOptions.sourcefile !== filePath) {
+					transformed.map = transformed.map.replace(
+						JSON.stringify(esbuildOptions.sourcefile),
+						JSON.stringify(filePath)
+					);
+				}
+				return transformed;
+			},
+			transformDynamicImport
+		] as const);
 
 		cache.set(hash, transformed);
 	}

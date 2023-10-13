@@ -3,31 +3,25 @@ import { createFixture } from 'fs-fixture';
 import { createNode } from './utils/tun';
 import { nodeVersions } from './utils/node-versions';
 
-const packageTypes = [
-	'commonjs',
-	'module',
-] as const;
+const packageTypes = ['commonjs', 'module'] as const;
 
 (async () => {
 	for (const packageType of packageTypes) {
-		await describe(`Package type: ${packageType}`, async ({ describe, onFinish }) => {
+		await describe(`Package type: ${packageType}`, async ({
+			describe,
+			onFinish
+		}) => {
 			const fixture = await createFixture('./tests/fixtures/');
 
 			onFinish(async () => await fixture.rm());
 
 			await fixture.writeJson('package.json', {
-				type: packageType,
+				type: packageType
 			});
 
 			await describe('tun', ({ runTestSuite }) => {
-				runTestSuite(
-					import('./specs/cli'),
-					fixture.path,
-				);
-				runTestSuite(
-					import('./specs/watch'),
-					fixture.path,
-				);
+				runTestSuite(import('./specs/cli'), fixture.path);
+				runTestSuite(import('./specs/watch'), fixture.path);
 			});
 
 			for (const nodeVersion of nodeVersions) {
@@ -36,26 +30,11 @@ const packageTypes = [
 				node.packageType = packageType;
 
 				await describe(`Node ${node.version}`, ({ runTestSuite }) => {
-					runTestSuite(
-						import('./specs/repl'),
-						node,
-					);
-					runTestSuite(
-						import('./specs/javascript'),
-						node,
-					);
-					runTestSuite(
-						import('./specs/typescript'),
-						node,
-					);
-					runTestSuite(
-						import('./specs/json'),
-						node,
-					);
-					runTestSuite(
-						import('./specs/wasm'),
-						node,
-					);
+					runTestSuite(import('./specs/repl'), node);
+					runTestSuite(import('./specs/javascript'), node);
+					runTestSuite(import('./specs/typescript'), node);
+					runTestSuite(import('./specs/json'), node);
+					runTestSuite(import('./specs/wasm'), node);
 				});
 			}
 		});

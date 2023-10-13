@@ -1,16 +1,17 @@
-import type { MessagePort } from "node:worker_threads";
-import path from "path";
-import { pathToFileURL, fileURLToPath } from "url";
+import fs from 'node:fs';
+import type { MessagePort } from 'node:worker_threads';
+import path from 'node:path';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import type {
 	ResolveFnOutput,
 	ResolveHookContext,
 	LoadHook,
-	GlobalPreloadHook,
-} from "module";
-import type { TransformOptions } from "esbuild";
-import { compareNodeVersion } from "../utils/compare-node-version";
-import { transform, transformDynamicImport } from "../utils/transform";
-import { resolveTsPath } from "../utils/resolve-ts-path";
+	GlobalPreloadHook
+} from 'node:module';
+import type { TransformOptions } from 'esbuild';
+import { compareNodeVersion } from '../utils/compare-node-version';
+import { transform, transformDynamicImport } from '../utils/transform';
+import { resolveTsPath } from '../utils/resolve-ts-path';
 import {
 	applySourceMap,
 	tsconfigPathsMatcher,
@@ -20,23 +21,23 @@ import {
 	getFormatFromFileUrl,
 	fileProtocol,
 	type MaybePromise,
-	type NodeError,
-} from "./utils.js";
-import { createTildeImportExpander } from "tilde-imports";
+	type NodeError
+} from './utils.js';
+import { createTildeImportExpander } from 'tilde-imports';
 // @ts-expect-error: missing types
-import { isGlobSpecifier, createGlobfileManager } from "glob-imports";
-import { getMonorepoDirpath } from "get-monorepo-root";
+import { isGlobSpecifier, createGlobfileManager } from 'glob-imports';
+import { getMonorepoDirpath } from 'get-monorepo-root';
 
 const monorepoDirpath = getMonorepoDirpath();
 if (monorepoDirpath === undefined) {
-	throw new Error("Could not find monorepo root");
+	throw new Error('Could not find monorepo root');
 }
 
 const expandTildeImport = createTildeImportExpander({
-	monorepoDirpath,
+	monorepoDirpath
 });
 const { getGlobfileContents, getGlobfilePath } = createGlobfileManager({
-	monorepoDirpath,
+	monorepoDirpath
 });
 
 const isDirectoryPattern = /\/(?:$|\?)/;
@@ -55,7 +56,7 @@ type resolve = (
 
 const isolatedLoader = compareNodeVersion([20, 0, 0]) >= 0;
 
-type SendToParent = (data: { type: "dependency"; path: string }) => void;
+type SendToParent = (data: { type: 'dependency'; path: string }) => void;
 
 let sendToParent: SendToParent | undefined = process.send
 	? process.send.bind(process)
@@ -100,20 +101,20 @@ const resolveExplicitPath = async (
 	return resolved;
 };
 
-const extensions = [".js", ".json", ".ts", ".tun", ".jsx"] as const;
+const extensions = ['.js', '.json', '.ts', '.tun', '.jsx'] as const;
 
 async function tryExtensions(
 	specifier: string,
 	context: ResolveHookContext,
 	defaultResolve: NextResolve
 ) {
-	const [specifierWithoutQuery, query] = specifier.split("?");
+	const [specifierWithoutQuery, query] = specifier.split('?');
 	let throwError: Error | undefined;
 	for (const extension of extensions) {
 		try {
 			return await resolveExplicitPath(
 				defaultResolve,
-				specifierWithoutQuery + extension + (query ? `?${query}` : ""),
+				specifierWithoutQuery + extension + (query ? `?${query}` : ''),
 				context
 			);
 		} catch (_error) {
@@ -135,12 +136,12 @@ async function tryDirectory(
 	defaultResolve: NextResolve
 ) {
 	const isExplicitDirectory = isDirectoryPattern.test(specifier);
-	const appendIndex = isExplicitDirectory ? "index" : "/index";
-	const [specifierWithoutQuery, query] = specifier.split("?");
+	const appendIndex = isExplicitDirectory ? 'index' : '/index';
+	const [specifierWithoutQuery, query] = specifier.split('?');
 
 	try {
 		return await tryExtensions(
-			specifierWithoutQuery + appendIndex + (query ? `?${query}` : ""),
+			specifierWithoutQuery + appendIndex + (query ? `?${query}` : ''),
 			context,
 			defaultResolve
 		);
@@ -154,7 +155,7 @@ async function tryDirectory(
 		const error = _error as Error;
 		const { message } = error;
 		error.message = error.message.replace(
-			`${appendIndex.replace("/", path.sep)}'`,
+			`${appendIndex.replace('/', path.sep)}'`,
 			"'"
 		);
 		error.stack = error.stack!.replace(message, error.message);
@@ -175,22 +176,22 @@ export const resolve: resolve = async function (
 ) {
 	// Added in v12.20.0
 	// https://nodejs.org/api/esm.html#esm_node_imports
-	if (!supportsNodePrefix && specifier.startsWith("node:")) {
+	if (!supportsNodePrefix && specifier.startsWith('node:')) {
 		specifier = specifier.slice(5);
 	}
 
 	// Support tilde alias imports
-	if (specifier.startsWith("~") && context.parentURL !== undefined) {
+	if (specifier.startsWith('~') && context.parentURL !== undefined) {
 		const importerFilepath = fileURLToPath(context.parentURL);
 		return {
 			url: pathToFileURL(
 				expandTildeImport({
 					importSpecifier: specifier,
-					importerFilepath,
+					importerFilepath
 				})
 			).toString(),
-			format: "module",
-			shortCircuit: true,
+			format: 'module',
+			shortCircuit: true
 		};
 	}
 
@@ -200,14 +201,14 @@ export const resolve: resolve = async function (
 		const url = pathToFileURL(
 			getGlobfilePath({
 				globfileModuleSpecifier: specifier,
-				importerFilepath,
+				importerFilepath
 			})
 		).toString();
 
 		return {
 			url,
-			format: "module",
-			shortCircuit: true,
+			format: 'module',
+			shortCircuit: true
 		};
 	}
 
@@ -222,7 +223,7 @@ export const resolve: resolve = async function (
 	if (
 		tsconfigPathsMatcher &&
 		!isPath && // bare specifier
-		!context.parentURL?.includes("/node_modules/")
+		!context.parentURL?.includes('/node_modules/')
 	) {
 		const possiblePaths = tsconfigPathsMatcher(specifier);
 		for (const possiblePath of possiblePaths) {
@@ -252,8 +253,8 @@ export const resolve: resolve = async function (
 				} catch (error) {
 					const { code } = error as NodeError;
 					if (
-						code !== "ERR_MODULE_NOT_FOUND" &&
-						code !== "ERR_PACKAGE_PATH_NOT_EXPORTED"
+						code !== 'ERR_MODULE_NOT_FOUND' &&
+						code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED'
 					) {
 						throw error;
 					}
@@ -267,17 +268,17 @@ export const resolve: resolve = async function (
 	} catch (error) {
 		if (error instanceof Error && !recursiveCall) {
 			const { code } = error as NodeError;
-			if (code === "ERR_UNSUPPORTED_DIR_IMPORT") {
+			if (code === 'ERR_UNSUPPORTED_DIR_IMPORT') {
 				try {
 					return await tryDirectory(specifier, context, defaultResolve);
 				} catch (error_) {
-					if ((error_ as NodeError).code !== "ERR_PACKAGE_IMPORT_NOT_DEFINED") {
+					if ((error_ as NodeError).code !== 'ERR_PACKAGE_IMPORT_NOT_DEFINED') {
 						throw error_;
 					}
 				}
 			}
 
-			if (code === "ERR_MODULE_NOT_FOUND") {
+			if (code === 'ERR_MODULE_NOT_FOUND') {
 				try {
 					return await tryExtensions(specifier, context, defaultResolve);
 				} catch {}
@@ -291,16 +292,43 @@ export const resolve: resolve = async function (
 export const load: LoadHook = async function (url, context, defaultLoad) {
 	if (sendToParent) {
 		sendToParent({
-			type: "dependency",
-			path: url,
+			type: 'dependency',
+			path: url
 		});
+	}
+
+	// If the file doesn't have an extension, we should return the source directly
+	if (url.startsWith('file://') && path.extname(url) === '') {
+		const source = await fs.promises.readFile(fileURLToPath(url), 'utf8');
+		return {
+			format: 'commonjs',
+			source,
+			shortCircuit: true
+		};
+	}
+
+	const globfilePath = path
+		.normalize(url.startsWith('file://') ? fileURLToPath(url) : url)
+		.replace(/^[a-zA-Z]:/, '');
+
+	if (path.basename(globfilePath).startsWith('__virtual__:')) {
+		const globfileContents = getGlobfileContents({
+			globfilePath,
+			filepathType: 'absolute'
+		});
+
+		return {
+			source: globfileContents,
+			format: 'module',
+			shortCircuit: true
+		};
 	}
 
 	if (isJsonPattern.test(url)) {
 		if (!context.importAssertions) {
 			context.importAssertions = {};
 		}
-		context.importAssertions.type = "json";
+		context.importAssertions.type = 'json';
 	}
 
 	const loaded = await defaultLoad(url, context);
@@ -309,25 +337,25 @@ export const load: LoadHook = async function (url, context, defaultLoad) {
 		return loaded;
 	}
 
-	const filePath = url.startsWith("file://") ? fileURLToPath(url) : url;
+	const filePath = url.startsWith('file://') ? fileURLToPath(url) : url;
 	const code = loaded.source.toString();
 
 	if (
 		// Support named imports in JSON modules
-		loaded.format === "json" ||
+		loaded.format === 'json' ||
 		tsExtensionsPattern.test(url)
 	) {
 		const transformed = await transform(code, filePath, {
-			tsconfigRaw: fileMatcher?.(filePath) as TransformOptions["tsconfigRaw"],
+			tsconfigRaw: fileMatcher?.(filePath) as TransformOptions['tsconfigRaw']
 		});
 
 		return {
-			format: "module",
-			source: applySourceMap(transformed, url, mainThreadPort),
+			format: 'module',
+			source: applySourceMap(transformed, url, mainThreadPort)
 		};
 	}
 
-	if (loaded.format === "module") {
+	if (loaded.format === 'module') {
 		const dynamicImportTransformed = transformDynamicImport(filePath, code);
 		if (dynamicImportTransformed) {
 			loaded.source = applySourceMap(

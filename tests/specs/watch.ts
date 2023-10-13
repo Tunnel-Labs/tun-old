@@ -9,7 +9,7 @@ import { tun } from '../utils/tun';
 type MaybePromise<T> = T | Promise<T>;
 const interact = async (
 	stdout: Readable,
-	actions: ((data: string) => MaybePromise<boolean | void>)[],
+	actions: ((data: string) => MaybePromise<boolean | void>)[]
 ) => {
 	let currentAction = actions.shift();
 
@@ -31,46 +31,45 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 	describe('watch', ({ test, describe }) => {
 		test('require file path', async () => {
 			const tunProcess = await tun({
-				args: ['watch'],
+				args: ['watch']
 			});
 			expect(tunProcess.exitCode).toBe(1);
-			expect(tunProcess.stderr).toMatch('Error: Missing required parameter "script path"');
+			expect(tunProcess.stderr).toMatch(
+				'Error: Missing required parameter "script path"'
+			);
 		});
 
 		test('watch files for changes', async ({ onTestFinish }) => {
 			let initialValue = Date.now();
 			const fixture = await createFixture({
 				'package.json': JSON.stringify({
-					type: 'module',
+					type: 'module'
 				}),
 				'index.js': `
 				import { value } from './value.js';
 				console.log(value);
 				`,
-				'value.js': `export const value = ${initialValue};`,
+				'value.js': `export const value = ${initialValue};`
 			});
 			onTestFinish(async () => await fixture.rm());
 
 			const tunProcess = tun({
-				args: [
-					'watch',
-					path.join(fixture.path, 'index.js'),
-				],
+				args: ['watch', path.join(fixture.path, 'index.js')]
 			});
 
-			await interact(
-				tunProcess.stdout!,
-				[
-					async (data) => {
-						if (data.includes(`${initialValue}\n`)) {
-							initialValue = Date.now();
-							await fixture.writeFile('value.js', `export const value = ${initialValue};`);
-							return true;
-						}
-					},
-					data => data.includes(`${initialValue}\n`),
-				],
-			);
+			await interact(tunProcess.stdout!, [
+				async (data) => {
+					if (data.includes(`${initialValue}\n`)) {
+						initialValue = Date.now();
+						await fixture.writeFile(
+							'value.js',
+							`export const value = ${initialValue};`
+						);
+						return true;
+					}
+				},
+				(data) => data.includes(`${initialValue}\n`)
+			]);
 
 			tunProcess.kill();
 
@@ -79,24 +78,18 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 
 		test('suppresses warnings & clear screen', async () => {
 			const tunProcess = tun({
-				args: [
-					'watch',
-					path.join(fixturePath, 'log-argv.ts'),
-				],
+				args: ['watch', path.join(fixturePath, 'log-argv.ts')]
 			});
 
-			await interact(
-				tunProcess.stdout!,
-				[
-					(data) => {
-						if (data.includes('log-argv.ts')) {
-							tunProcess.stdin?.write('enter');
-							return true;
-						}
-					},
-					data => data.includes('log-argv.ts'),
-				],
-			);
+			await interact(tunProcess.stdout!, [
+				(data) => {
+					if (data.includes('log-argv.ts')) {
+						tunProcess.stdin?.write('enter');
+						return true;
+					}
+				},
+				(data) => data.includes('log-argv.ts')
+			]);
 
 			tunProcess.kill();
 
@@ -107,17 +100,10 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 
 		test('passes flags', async () => {
 			const tunProcess = tun({
-				args: [
-					'watch',
-					path.join(fixturePath, 'log-argv.ts'),
-					'--some-flag',
-				],
+				args: ['watch', path.join(fixturePath, 'log-argv.ts'), '--some-flag']
 			});
 
-			await interact(
-				tunProcess.stdout!,
-				[data => data.startsWith('["')],
-			);
+			await interact(tunProcess.stdout!, [(data) => data.startsWith('["')]);
 
 			tunProcess.kill();
 
@@ -137,30 +123,24 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 					sleepSync(300);
 					console.log('end');
 				});
-				`,
+				`
 			});
 
 			onTestFinish(async () => await fixture.rm());
 
 			const tunProcess = tun({
-				args: [
-					'watch',
-					path.join(fixture.path, 'index.js'),
-				],
+				args: ['watch', path.join(fixture.path, 'index.js')]
 			});
 
-			await interact(
-				tunProcess.stdout!,
-				[
-					(data) => {
-						if (data.includes('start\n')) {
-							tunProcess.stdin?.write('enter');
-							return true;
-						}
-					},
-					data => data.includes('end\n'),
-				],
-			);
+			await interact(tunProcess.stdout!, [
+				(data) => {
+					if (data.includes('start\n')) {
+						tunProcess.stdin?.write('enter');
+						return true;
+					}
+				},
+				(data) => data.includes('end\n')
+			]);
 
 			tunProcess.kill();
 
@@ -171,27 +151,22 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 		describe('help', ({ test }) => {
 			test('shows help', async () => {
 				const tunProcess = await tun({
-					args: ['watch', '--help'],
+					args: ['watch', '--help']
 				});
 
 				expect(tunProcess.exitCode).toBe(0);
-				expect(tunProcess.stdout).toMatch('Run the script and watch for changes');
+				expect(tunProcess.stdout).toMatch(
+					'Run the script and watch for changes'
+				);
 				expect(tunProcess.stderr).toBe('');
 			});
 
 			test('passes down --help to file', async () => {
 				const tunProcess = tun({
-					args: [
-						'watch',
-						path.join(fixturePath, 'log-argv.ts'),
-						'--help',
-					],
+					args: ['watch', path.join(fixturePath, 'log-argv.ts'), '--help']
 				});
 
-				await interact(
-					tunProcess.stdout!,
-					[data => data.startsWith('["')],
-				);
+				await interact(tunProcess.stdout!, [(data) => data.startsWith('["')]);
 
 				tunProcess.kill();
 
@@ -216,7 +191,7 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 						import valueB from './${fileB}'
 						import valueC from './${depA}'
 						console.log(valueA, valueB, valueC)
-					`.trim(),
+					`.trim()
 				});
 
 				onTestFinish(async () => await fixture.rm());
@@ -228,35 +203,32 @@ export default testSuite(async ({ describe }, fixturePath: string) => {
 						'--clear-screen=false',
 						`--ignore=${fileA}`,
 						`--ignore=${path.join(fixture.path, 'directory/*')}`,
-						entryFile,
-					],
+						entryFile
+					]
 				});
 				const negativeSignal = '"fail"';
 
-				await interact(
-					tunProcess.stdout!,
-					[
-						async (data) => {
-							if (data.includes('fail')) {
-								throw new Error('should not log ignored file');
-							}
+				await interact(tunProcess.stdout!, [
+					async (data) => {
+						if (data.includes('fail')) {
+							throw new Error('should not log ignored file');
+						}
 
-							if (data === 'logA logB logC\n') {
-								// These changes should not trigger a re-run
-								await Promise.all([
-									fixture.writeFile(fileA, `export default ${negativeSignal}`),
-									fixture.writeFile(fileB, `export default ${negativeSignal}`),
-									fixture.writeFile(depA, `export default ${negativeSignal}`),
-								]);
+						if (data === 'logA logB logC\n') {
+							// These changes should not trigger a re-run
+							await Promise.all([
+								fixture.writeFile(fileA, `export default ${negativeSignal}`),
+								fixture.writeFile(fileB, `export default ${negativeSignal}`),
+								fixture.writeFile(depA, `export default ${negativeSignal}`)
+							]);
 
-								await setTimeout(1500);
-								await fixture.writeFile(entryFile, 'console.log("TERMINATE")');
-								return true;
-							}
-						},
-						data => data === 'TERMINATE\n',
-					],
-				);
+							await setTimeout(1500);
+							await fixture.writeFile(entryFile, 'console.log("TERMINATE")');
+							return true;
+						}
+					},
+					(data) => data === 'TERMINATE\n'
+				]);
 
 				tunProcess.kill();
 

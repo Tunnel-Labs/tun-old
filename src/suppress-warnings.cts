@@ -10,17 +10,14 @@ const ignoreWarnings = new Set([
 	// For JSON modules via https://github.com/nodejs/node/pull/46901
 	'Import assertions are not a stable feature of the JavaScript language. Avoid relying on their current behavior and syntax as those might change in a future version of Node.js.',
 
-	'`globalPreload` is planned for removal in favor of `initialize`. `globalPreload` is an experimental feature and might change at any time',
+	'`globalPreload` is planned for removal in favor of `initialize`. `globalPreload` is an experimental feature and might change at any time'
 ]);
 
 const { emit } = process;
 
 // @ts-expect-error emit type mismatch
 process.emit = function (event: 'warning', warning: Error) {
-	if (
-		event === 'warning'
-		&& ignoreWarnings.has(warning.message)
-	) {
+	if (event === 'warning' && ignoreWarnings.has(warning.message)) {
 		return;
 	}
 

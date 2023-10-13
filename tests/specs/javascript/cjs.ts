@@ -17,7 +17,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				expect(stdout).toMatch(
 					semver.satisfies(node.version, nodeSupports.testRunner)
 						? '✔ resolves required node prefix'
-						: '✖ resolves required node prefix: Error',
+						: '✖ resolves required node prefix: Error'
 				);
 
 				expect(stderr).not.toMatch(/loader/i);
@@ -38,7 +38,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				});
 
 				test('TypeScript Import', async () => {
-					const nodeProcess = await node.import(importPath, { typescript: true });
+					const nodeProcess = await node.import(importPath, {
+						typescript: true
+					});
 					assertResults(nodeProcess);
 					expect(nodeProcess.stdout).toMatch('{"default":1234}');
 				});
@@ -100,7 +102,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				expect(stdout).toMatch(
 					semver.satisfies(node.version, nodeSupports.testRunner)
 						? '✔ resolves required node prefix'
-						: '✖ resolves required node prefix: Error',
+						: '✖ resolves required node prefix: Error'
 				);
 
 				expect(stderr).not.toMatch(/loader/i);

@@ -1,19 +1,12 @@
-import {
-	typeFlag,
-	type Flags,
-	type TypeFlagOptions,
-} from 'type-flag';
+import { typeFlag, type Flags, type TypeFlagOptions } from 'type-flag';
 
 export const ignoreAfterArgument = (
-	ignoreFirstArgument = true,
+	ignoreFirstArgument = true
 ): TypeFlagOptions['ignore'] => {
 	let ignore = false;
 
 	return (type) => {
-		if (
-			ignore
-			|| type === 'unknown-flag'
-		) {
+		if (ignore || type === 'unknown-flag') {
 			return true;
 		}
 
@@ -24,17 +17,10 @@ export const ignoreAfterArgument = (
 	};
 };
 
-export function removeArgvFlags(
-	tunFlags: Flags,
-	argv = process.argv.slice(2),
-) {
-	typeFlag(
-		tunFlags,
-		argv,
-		{
-			ignore: ignoreAfterArgument(),
-		},
-	);
+export function removeArgvFlags(tunFlags: Flags, argv = process.argv.slice(2)) {
+	typeFlag(tunFlags, argv, {
+		ignore: ignoreAfterArgument()
+	});
 
 	return argv;
 }

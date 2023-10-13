@@ -21,7 +21,7 @@ if (process.send) {
 	function relaySignal(signal: NodeJS.Signals) {
 		process.send!({
 			type: 'kill',
-			signal,
+			signal
 		});
 
 		/**
@@ -34,7 +34,7 @@ if (process.send) {
 	}
 
 	const relaySignals = ['SIGINT', 'SIGTERM'] as const;
-	type RelaySignals = typeof relaySignals[number];
+	type RelaySignals = (typeof relaySignals)[number];
 	for (const signal of relaySignals) {
 		process.on(signal, relaySignal);
 	}
@@ -52,9 +52,13 @@ if (process.send) {
 	// Also hide relaySignal from process.listeners()
 	const { listeners } = process;
 	process.listeners = function (eventName) {
-		const result: BaseEventListener[] = Reflect.apply(listeners, this, arguments);
+		const result: BaseEventListener[] = Reflect.apply(
+			listeners,
+			this,
+			arguments
+		);
 		if (relaySignals.includes(eventName as RelaySignals)) {
-			return result.filter(listener => listener !== relaySignal);
+			return result.filter((listener) => listener !== relaySignal);
 		}
 		return result;
 	};

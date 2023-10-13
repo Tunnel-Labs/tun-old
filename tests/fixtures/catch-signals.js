@@ -1,7 +1,4 @@
-const signals = [
-	'SIGINT',
-	'SIGTERM',
-];
+const signals = ['SIGINT', 'SIGTERM'];
 
 for (const name of signals) {
 	process.on(name, () => {

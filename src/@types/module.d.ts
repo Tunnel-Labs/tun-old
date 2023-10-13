@@ -23,6 +23,6 @@ declare module 'module' {
 		request: string,
 		parent: Parent,
 		isMain: boolean,
-		options?: Record<PropertyKey, unknown>,
+		options?: Record<PropertyKey, unknown>
 	): string;
 }

@@ -6,9 +6,7 @@ tsExtensions['.jsx'] = ['.tun', '.ts', '.jsx', '.js'];
 tsExtensions['.cjs'] = ['.cts'];
 tsExtensions['.mjs'] = ['.mts'];
 
-export const resolveTsPath = (
-	filePath: string,
-) => {
+export const resolveTsPath = (filePath: string) => {
 	const extension = path.extname(filePath);
 	const [extensionNoQuery, query] = path.extname(filePath).split('?');
 	const possibleExtensions = tsExtensions[extensionNoQuery];
@@ -16,11 +14,8 @@ export const resolveTsPath = (
 	if (possibleExtensions) {
 		const extensionlessPath = filePath.slice(0, -extension.length);
 		return possibleExtensions.map(
-			tsExtension => (
-				extensionlessPath
-				+ tsExtension
-				+ (query ? `?${query}` : '')
-			),
+			(tsExtension) =>
+				extensionlessPath + tsExtension + (query ? `?${query}` : '')
 		);
 	}
 };

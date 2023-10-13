@@ -8,13 +8,11 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 	describe('.mts extension', ({ describe }) => {
 		function assertResults(
 			{ stdout, stderr }: ExecaReturnValue,
-			cjsContext = false,
+			cjsContext = false
 		) {
 			expect(stdout).toMatch('loaded ts-ext-mts/index.mts');
 			expect(stdout).toMatch(
-				cjsContext
-					? '✔ has CJS context'
-					: '✖ has CJS context',
+				cjsContext ? '✔ has CJS context' : '✖ has CJS context'
 			);
 			expect(stdout).toMatch('✔ name in error');
 			expect(stdout).toMatch('✔ sourcemaps');
@@ -23,7 +21,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			expect(stdout).toMatch(
 				semver.satisfies(node.version, nodeSupports.testRunner)
 					? '✔ resolves required node prefix'
-					: '✖ resolves required node prefix: Error',
+					: '✖ resolves required node prefix: Error'
 			);
 			expect(stderr).not.toMatch(/loader/i);
 		}
@@ -66,7 +64,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			});
 
 			test('Require', async () => {
-				const nodeProcess = await node.require(importPath, { typescript: true });
+				const nodeProcess = await node.require(importPath, {
+					typescript: true
+				});
 
 				// By "require()"ing an ESM file, it forces it to be compiled in a CJS context
 				assertResults(nodeProcess, true);

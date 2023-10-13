@@ -9,13 +9,11 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 		describe('.mjs extension', ({ describe }) => {
 			function assertResults(
 				{ stdout, stderr }: ExecaReturnValue,
-				cjsContext = false,
+				cjsContext = false
 			) {
 				expect(stdout).toMatch('loaded esm-ext-mjs/index.mjs');
 				expect(stdout).toMatch(
-					cjsContext
-						? '✔ has CJS context'
-						: '✖ has CJS context',
+					cjsContext ? '✔ has CJS context' : '✖ has CJS context'
 				);
 				expect(stdout).toMatch('✔ name in error');
 				expect(stdout).toMatch('✔ sourcemaps');
@@ -24,7 +22,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				expect(stdout).toMatch(
 					semver.satisfies(node.version, nodeSupports.testRunner)
 						? '✔ resolves required node prefix'
-						: '✖ resolves required node prefix: Error',
+						: '✖ resolves required node prefix: Error'
 				);
 				expect(stderr).not.toMatch(/loader/i);
 			}
@@ -44,7 +42,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				});
 
 				test('TypeScript Import', async () => {
-					const nodeProcess = await node.import(importPath, { typescript: true });
+					const nodeProcess = await node.import(importPath, {
+						typescript: true
+					});
 					assertResults(nodeProcess);
 					expect(nodeProcess.stdout).toMatch('{"default":1234}');
 				});
@@ -100,13 +100,11 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 		describe('.js extension', ({ describe }) => {
 			function assertResults(
 				{ stdout, stderr }: ExecaReturnValue,
-				cjsContext = false,
+				cjsContext = false
 			) {
 				expect(stdout).toMatch('loaded esm-ext-js/index.js');
 				expect(stdout).toMatch(
-					cjsContext
-						? '✔ has CJS context'
-						: '✖ has CJS context',
+					cjsContext ? '✔ has CJS context' : '✖ has CJS context'
 				);
 				expect(stdout).toMatch('✔ name in error');
 				expect(stdout).toMatch('✔ sourcemaps');
@@ -115,7 +113,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				expect(stdout).toMatch(
 					semver.satisfies(node.version, nodeSupports.testRunner)
 						? '✔ resolves required node prefix'
-						: '✖ resolves required node prefix: Error',
+						: '✖ resolves required node prefix: Error'
 				);
 				expect(stderr).not.toMatch(/loader/i);
 			}

@@ -3,9 +3,7 @@ import type { TransformOptions } from 'esbuild';
 
 const nodeVersion = process.versions.node;
 
-export const getEsbuildOptions = (
-	extendOptions: TransformOptions,
-) => {
+export const getEsbuildOptions = (extendOptions: TransformOptions) => {
 	const options: TransformOptions = {
 		target: `node${nodeVersion}`,
 
@@ -28,7 +26,7 @@ export const getEsbuildOptions = (
 		minifyWhitespace: true,
 		keepNames: true,
 
-		...extendOptions,
+		...extendOptions
 	};
 
 	if (options.sourcefile) {

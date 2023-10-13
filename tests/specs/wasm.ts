@@ -19,7 +19,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 
 		test('Loads with experimental flag', async () => {
 			const nodeProcess = await node.load(importPath, {
-				args: ['--experimental-wasm-modules'],
+				args: ['--experimental-wasm-modules']
 			});
 
 			if (node.isCJS) {

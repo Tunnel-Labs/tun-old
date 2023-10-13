@@ -1,12 +1,1 @@
-export default [
-	(
-		<div>
-			hello world
-		</div>
-	),
-	(
-		<>
-			goodbye world
-		</>
-	),
-];
+export default [<div>hello world</div>, <>goodbye world</>];

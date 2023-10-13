@@ -5,13 +5,10 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 	describe('repl', ({ test }) => {
 		test('handles ts', async () => {
 			const tunProcess = node.tun({
-				args: ['--interactive'],
+				args: ['--interactive']
 			});
 
-			const commands = [
-				'const message: string = "SUCCESS"',
-				'message',
-			];
+			const commands = ['const message: string = "SUCCESS"', 'message'];
 
 			await new Promise<void>((resolve) => {
 				tunProcess.stdout!.on('data', (data: Buffer) => {
@@ -31,9 +28,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			tunProcess.kill();
 		}, 40_000);
 
-		test('doesn\'t error on require', async () => {
+		test("doesn't error on require", async () => {
 			const tunProcess = node.tun({
-				args: ['--interactive'],
+				args: ['--interactive']
 			});
 
 			await new Promise<void>((resolve, reject) => {
@@ -59,15 +56,10 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 
 		test('supports incomplete expression in segments', async () => {
 			const tunProcess = node.tun({
-				args: ['--interactive'],
+				args: ['--interactive']
 			});
 
-			const commands = [
-				['> ', '('],
-				['... ', '1'],
-				['... ', ')'],
-				['1'],
-			];
+			const commands = [['> ', '('], ['... ', '1'], ['... ', ')'], ['1']];
 
 			let [expected, nextCommand] = commands.shift()!;
 			await new Promise<void>((resolve) => {
@@ -88,14 +80,16 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 
 		test('errors on import statement', async () => {
 			const tunProcess = node.tun({
-				args: ['--interactive'],
+				args: ['--interactive']
 			});
 
 			await new Promise<void>((resolve) => {
 				tunProcess.stdout!.on('data', (data: Buffer) => {
 					const chunkString = data.toString();
 
-					if (chunkString.includes('SyntaxError: Cannot use import statement')) {
+					if (
+						chunkString.includes('SyntaxError: Cannot use import statement')
+					) {
 						return resolve();
 					}
 

@@ -13,31 +13,23 @@ type Options = {
 const __dirname = fileURLToPath(import.meta.url);
 export const tunPath = path.join(__dirname, '../../../dist/cli.mjs');
 
-export const tun = (
-	options: Options,
-) => execaNode(
-	tunPath,
-	options.args,
-	{
+export const tun = (options: Options) =>
+	execaNode(tunPath, options.args, {
 		env: {
-			ESBK_DISABLE_CACHE: '1',
+			ESBK_DISABLE_CACHE: '1'
 		},
 		nodePath: options.nodePath,
 		nodeOptions: [],
 		cwd: options.cwd,
 		reject: false,
-		all: true,
-	},
-);
+		all: true
+	});
 
-export async function createNode(
-	nodeVersion: string,
-	fixturePath: string,
-) {
+export async function createNode(nodeVersion: string, fixturePath: string) {
 	console.log('Getting node', nodeVersion);
 	const startTime = Date.now();
 	const node = await getNode(nodeVersion, {
-		progress: true,
+		progress: true
 	});
 	console.log('Got node', Date.now() - startTime, node);
 
@@ -47,12 +39,10 @@ export async function createNode(
 		get isCJS() {
 			return this.packageType === 'commonjs';
 		},
-		tun(
-			options: Options,
-		) {
+		tun(options: Options) {
 			return tun({
 				...options,
-				nodePath: node.path,
+				nodePath: node.path
 			});
 		},
 		load(
@@ -60,57 +50,42 @@ export async function createNode(
 			options?: {
 				cwd?: string;
 				args?: string[];
-			},
+			}
 		) {
-			return this.tun(
-				{
-					args: [
-						...(options?.args ?? []),
-						filePath,
-					],
-					cwd: path.join(fixturePath, options?.cwd ?? ''),
-				},
-			);
+			return this.tun({
+				args: [...(options?.args ?? []), filePath],
+				cwd: path.join(fixturePath, options?.cwd ?? '')
+			});
 		},
 		import(
 			filePath: string,
 			options?: {
 				typescript?: boolean;
-			},
+			}
 		) {
 			return this.tun({
-				args: [
-					`./import-file${options?.typescript ? '.ts' : '.js'}`,
-					filePath,
-				],
-				cwd: fixturePath,
+				args: [`./import-file${options?.typescript ? '.ts' : '.js'}`, filePath],
+				cwd: fixturePath
 			});
 		},
 		require(
 			filePath: string,
 			options?: {
 				typescript?: boolean;
-			},
+			}
 		) {
 			return this.tun({
 				args: [
 					`./require-file${options?.typescript ? '.cts' : '.cjs'}`,
-					filePath,
+					filePath
 				],
-				cwd: fixturePath,
+				cwd: fixturePath
 			});
 		},
-		requireFlag(
-			filePath: string,
-		) {
+		requireFlag(filePath: string) {
 			return this.tun({
-				args: [
-					'--eval',
-					'null',
-					'--require',
-					filePath,
-				],
-				cwd: fixturePath,
+				args: ['--eval', 'null', '--require', filePath],
+				cwd: fixturePath
 			});
 		},
 
@@ -119,27 +94,23 @@ export async function createNode(
 			filePath: string,
 			options?: {
 				args?: string[];
-			},
+			}
 		) {
-			return this.tun(
-				{
-					args: [
-						...(options?.args ?? []),
-						filePath,
-					],
-					cwd,
-				},
-			);
+			return this.tun({
+				args: [...(options?.args ?? []), filePath],
+				cwd
+			});
 		},
 
-		async importFile(
-			cwd: string,
-			importFrom: string,
-			fileExtension = '.mjs',
-		) {
-			const fileName = `_${Math.random().toString(36).slice(2)}${fileExtension}`;
+		async importFile(cwd: string, importFrom: string, fileExtension = '.mjs') {
+			const fileName = `_${Math.random()
+				.toString(36)
+				.slice(2)}${fileExtension}`;
 			const filePath = path.resolve(cwd, fileName);
-			await fs.writeFile(filePath, `import * as _ from '${importFrom}';console.log(_)`);
+			await fs.writeFile(
+				filePath,
+				`import * as _ from '${importFrom}';console.log(_)`
+			);
 			try {
 				return await this.loadFile(cwd, filePath);
 			} finally {
@@ -150,17 +121,22 @@ export async function createNode(
 		async requireFile(
 			cwd: string,
 			requireFrom: string,
-			fileExtension = '.cjs',
+			fileExtension = '.cjs'
 		) {
-			const fileName = `_${Math.random().toString(36).slice(2)}${fileExtension}`;
+			const fileName = `_${Math.random()
+				.toString(36)
+				.slice(2)}${fileExtension}`;
 			const filePath = path.resolve(cwd, fileName);
-			await fs.writeFile(filePath, `const _ = require('${requireFrom}');console.log(_)`);
+			await fs.writeFile(
+				filePath,
+				`const _ = require('${requireFrom}');console.log(_)`
+			);
 			try {
 				return await this.loadFile(cwd, filePath);
 			} finally {
 				await fs.rm(filePath);
 			}
-		},
+		}
 	};
 }
 

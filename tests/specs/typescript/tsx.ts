@@ -8,13 +8,11 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 	describe('.tun extension', ({ describe }) => {
 		function assertResults(
 			{ stdout, stderr }: ExecaReturnValue,
-			cjsContext = false,
+			cjsContext = false
 		) {
 			expect(stdout).toMatch('loaded ts-ext-tun/index.tun');
 			expect(stdout).toMatch(
-				cjsContext
-					? '✔ has CJS context'
-					: '✖ has CJS context',
+				cjsContext ? '✔ has CJS context' : '✖ has CJS context'
 			);
 			expect(stdout).toMatch('✔ name in error');
 			expect(stdout).toMatch('✔ sourcemaps');
@@ -23,7 +21,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			expect(stdout).toMatch(
 				semver.satisfies(node.version, nodeSupports.testRunner)
 					? '✔ resolves required node prefix'
-					: '✖ resolves required node prefix: Error',
+					: '✖ resolves required node prefix: Error'
 			);
 			expect(stderr).not.toMatch(/loader/i);
 		}
@@ -39,7 +37,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			test('Import', async () => {
 				const nodeProcess = await node.import(importPath);
 				assertResults(nodeProcess, node.isCJS);
-				expect(nodeProcess.stdout).toMatch('{"default":["div",null,"hello world"]}');
+				expect(nodeProcess.stdout).toMatch(
+					'{"default":["div",null,"hello world"]}'
+				);
 			});
 
 			test('Require', async () => {
@@ -47,7 +47,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 
 				// By "require()"ing an ESM file, it forces it to be compiled in a CJS context
 				assertResults(nodeProcess, true);
-				expect(nodeProcess.stdout).toMatch('{"default":["div",null,"hello world"]}');
+				expect(nodeProcess.stdout).toMatch(
+					'{"default":["div",null,"hello world"]}'
+				);
 			});
 		});
 
@@ -62,7 +64,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			test('Import', async () => {
 				const nodeProcess = await node.import(importPath);
 				assertResults(nodeProcess, node.isCJS);
-				expect(nodeProcess.stdout).toMatch('{"default":["div",null,"hello world"]}');
+				expect(nodeProcess.stdout).toMatch(
+					'{"default":["div",null,"hello world"]}'
+				);
 			});
 
 			test('Require', async () => {
@@ -70,7 +74,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 
 				// By "require()"ing an ESM file, it forces it to be compiled in a CJS context
 				assertResults(nodeProcess, true);
-				expect(nodeProcess.stdout).toMatch('{"default":["div",null,"hello world"]}');
+				expect(nodeProcess.stdout).toMatch(
+					'{"default":["div",null,"hello world"]}'
+				);
 			});
 		});
 
@@ -85,7 +91,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 			test('Import', async () => {
 				const nodeProcess = await node.import(importPath);
 				assertResults(nodeProcess, node.isCJS);
-				expect(nodeProcess.stdout).toMatch('{"default":["div",null,"hello world"]}');
+				expect(nodeProcess.stdout).toMatch(
+					'{"default":["div",null,"hello world"]}'
+				);
 			});
 
 			test('Require', async () => {
@@ -93,7 +101,9 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 
 				// By "require()"ing an ESM file, it forces it to be compiled in a CJS context
 				assertResults(nodeProcess, true);
-				expect(nodeProcess.stdout).toMatch('{"default":["div",null,"hello world"]}');
+				expect(nodeProcess.stdout).toMatch(
+					'{"default":["div",null,"hello world"]}'
+				);
 			});
 		});
 	});

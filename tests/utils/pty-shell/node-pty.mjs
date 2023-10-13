@@ -9,7 +9,7 @@ import { spawn } from 'node-pty';
 const [file, ...args] = process.argv.slice(2);
 
 const spawned = spawn(file, args, {
-	cols: 1000,
+	cols: 1000
 });
 
 process.on('message', (command) => {

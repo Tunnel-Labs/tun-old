@@ -4,7 +4,8 @@ import type { NodeApis } from '../../utils/tun';
 export default testSuite(async ({ describe }, node: NodeApis) => {
 	describe('Dependencies', ({ describe }) => {
 		describe('module dependency', ({ test }) => {
-			const output = '{"default":"default export","namedExport":"named export"}';
+			const output =
+				'{"default":"default export","namedExport":"named export"}';
 
 			test('Import', async () => {
 				const nodeProcess = await node.import('package-module');
