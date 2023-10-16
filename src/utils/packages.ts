@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'pathe';
 import yaml from 'yaml';
-import glob from 'glob';
+import { glob } from 'glob';
 import { PackageJson } from 'type-fest';
 
 export function getPackageSlugToPackageMetadataMap({
