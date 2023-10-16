@@ -17,6 +17,8 @@ import { transformSync, transformDynamicImport } from '../utils/transform';
 import { resolveTsPath } from '../utils/resolve-ts-path';
 import { compareNodeVersion } from '../utils/compare-node-version';
 import { isFileEsmSync } from 'is-file-esm-ts';
+import { getPackageSlugToPackageMetadataMap } from '../utils/packages';
+import resolve from 'resolve.exports';
 
 const isRelativePathPattern = /^\.{1,2}\//;
 const isTsFilePatten = /\.[cm]?tun?$/;
@@ -38,6 +40,10 @@ const monorepoDirpath = getMonorepoDirpath();
 if (monorepoDirpath === undefined) {
 	throw new Error('Could not find monorepo root');
 }
+
+const packageSlugToPackageMetadataMap = getPackageSlugToPackageMetadataMap({
+	monorepoDirpath
+});
 
 const expandTildeImport = createTildeImportExpander({
 	monorepoDirpath
@@ -62,7 +68,7 @@ const transformExtensions = [
 	'.mjs',
 	'.mts',
 	'.ts',
-	'.tun',
+	'.tsx',
 	'.jsx'
 ];
 
@@ -151,7 +157,7 @@ const transformer = (module: Module, filePath: string) => {
 	 * https://github.com/nodejs/node/blob/v12.16.0/lib/internal/modules/cjs/loader.js#L1166
 	 */
 	'.ts',
-	'.tun',
+	'.tsx',
 	'.jsx'
 ].forEach((extension) => {
 	extensions[extension] = transformer;
@@ -207,6 +213,30 @@ Module._resolveFilename = (request, parent, isMain, options) => {
 			importSpecifier: request,
 			importerFilepath: parent.filename
 		});
+	}
+
+	if (request.startsWith('@-/')) {
+		const packageSlug = request.match(/@-\/([^/]+)/)?.[1];
+		if (packageSlug === undefined) {
+			throw new Error(
+				`Could not extract monorepo package slug from "${request}"`
+			);
+		}
+
+		const packageMetadata = packageSlugToPackageMetadataMap.get(packageSlug);
+		if (packageMetadata === undefined) {
+			throw new Error(`Could not find monorepo package "${request}"`);
+		}
+
+		const { packageDirpath, packageJson } = packageMetadata;
+
+		const relativeImportPath = request.replace(`@t/${packageSlug}`, '.');
+		const relativeFilePaths =
+			resolve.exports(packageJson, relativeImportPath) ?? [];
+
+		if (relativeFilePaths.length > 0) {
+			return path.join(packageDirpath, relativeFilePaths[0] as string);
+		}
 	}
 
 	if (

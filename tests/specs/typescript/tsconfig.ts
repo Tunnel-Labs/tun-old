@@ -4,7 +4,7 @@ import type { NodeApis } from '../../utils/tun';
 export default testSuite(async ({ describe }, node: NodeApis) => {
 	describe('tsconfig', ({ test, describe }) => {
 		test('jsxFactory & jsxFragmentFactory', async () => {
-			const nodeProcess = await node.load('./src/tun.tun', {
+			const nodeProcess = await node.load('./src/tun.tsx', {
 				cwd: './tsconfig'
 			});
 			expect(nodeProcess.stdout).toBe(
@@ -13,7 +13,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 		});
 
 		test('Custom tsconfig.json path', async () => {
-			const nodeProcess = await node.load('./src/tun.tun', {
+			const nodeProcess = await node.load('./src/tun.tsx', {
 				cwd: './tsconfig',
 				args: ['--tsconfig', './tsconfig-custom/tsconfig.custom-name.json']
 			});

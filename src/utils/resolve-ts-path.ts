@@ -1,8 +1,8 @@
 import path from 'path';
 
 const tsExtensions: Record<string, string[]> = Object.create(null);
-tsExtensions['.js'] = ['.ts', '.tun', '.js', '.jsx'];
-tsExtensions['.jsx'] = ['.tun', '.ts', '.jsx', '.js'];
+tsExtensions['.js'] = ['.ts', '.tsx', '.js', '.jsx'];
+tsExtensions['.jsx'] = ['.tsx', '.ts', '.jsx', '.js'];
 tsExtensions['.cjs'] = ['.cts'];
 tsExtensions['.mjs'] = ['.mts'];
 

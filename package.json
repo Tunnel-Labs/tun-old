@@ -30,8 +30,12 @@
 		"get-tsconfig": "^4.7.2",
 		"glob-imports": "^3.0.0",
 		"is-file-esm-ts": "^0.1.0",
+		"glob": "^10.3.10",
+		"pathe": "^1.1.1",
+		"resolve.exports": "^2.0.2",
 		"source-map-support": "^0.5.21",
-		"tilde-imports": "^3.1.2"
+		"tilde-imports": "^3.1.2",
+		"yaml": "^2.3.3"
 	},
 	"devDependencies": {
 		"@ampproject/remapping": "^2.2.1",

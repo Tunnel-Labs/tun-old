@@ -14,18 +14,30 @@ dependencies:
   get-tsconfig:
     specifier: ^4.7.2
     version: 4.7.2
+  glob:
+    specifier: ^10.3.10
+    version: 10.3.10
   glob-imports:
     specifier: ^3.0.0
     version: 3.0.0
   is-file-esm-ts:
     specifier: ^0.1.0
     version: 0.1.0
+  pathe:
+    specifier: ^1.1.1
+    version: 1.1.1
+  resolve.exports:
+    specifier: ^2.0.2
+    version: 2.0.2
   source-map-support:
     specifier: ^0.5.21
     version: 0.5.21
   tilde-imports:
     specifier: ^3.1.2
     version: 3.1.2
+  yaml:
+    specifier: ^2.3.3
+    version: 2.3.3
 
 optionalDependencies:
   fsevents:
@@ -2327,6 +2339,11 @@ packages:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
     dev: false
 
+  /resolve.exports@2.0.2:
+    resolution: {integrity: sha512-X2UW6Nw3n/aMgDVy+0rSqgHlv39WZAlZrXCdnbyEiKm17DSqHX4MmQMaST3FbeWR5FTuRcUwYAziZajji0Y7mg==}
+    engines: {node: '>=10'}
+    dev: false
+
   /resolve@1.22.8:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
@@ -2579,7 +2596,7 @@ packages:
     dependencies:
       fast-glob: 3.3.1
       pathe: 1.1.1
-      yaml: 2.3.2
+      yaml: 2.3.3
     dev: false
 
   /tmp-promise@3.0.3:
@@ -2703,8 +2720,8 @@ packages:
     engines: {node: '>= 14'}
     dev: true
 
-  /yaml@2.3.2:
-    resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
+  /yaml@2.3.3:
+    resolution: {integrity: sha512-zw0VAJxgeZ6+++/su5AFoqBbZbrEakwu+X0M5HmcwUiBL7AzcuPKjj5we4xfQLp78LkEMpD0cOnUhmgOVy3KdQ==}
     engines: {node: '>= 14'}
     dev: false
 

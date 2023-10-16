@@ -27,12 +27,17 @@ import { createTildeImportExpander } from 'tilde-imports';
 // @ts-expect-error: missing types
 import { isGlobSpecifier, createGlobfileManager } from 'glob-imports';
 import { getMonorepoDirpath } from 'get-monorepo-root';
+import { exports as resolveExports } from 'resolve.exports';
+import { getPackageSlugToPackageMetadataMap } from '../utils/packages';
 
 const monorepoDirpath = getMonorepoDirpath();
 if (monorepoDirpath === undefined) {
 	throw new Error('Could not find monorepo root');
 }
 
+const packageSlugToPackageMetadataMap = getPackageSlugToPackageMetadataMap({
+	monorepoDirpath
+});
 const expandTildeImport = createTildeImportExpander({
 	monorepoDirpath
 });
@@ -101,7 +106,7 @@ const resolveExplicitPath = async (
 	return resolved;
 };
 
-const extensions = ['.js', '.json', '.ts', '.tun', '.jsx'] as const;
+const extensions = ['.js', '.json', '.ts', '.tsx', '.jsx'] as const;
 
 async function tryExtensions(
 	specifier: string,
@@ -205,6 +210,36 @@ export const resolve: resolve = async function (
 			format: 'module',
 			shortCircuit: true
 		};
+	}
+
+	if (specifier.startsWith('@-/')) {
+		const packageSlug = specifier.match(/@-\/([^/]+)/)?.[1];
+		if (packageSlug === undefined) {
+			throw new Error(
+				`Could not extract monorepo package slug from "${specifier}"`
+			);
+		}
+
+		const packageMetadata = packageSlugToPackageMetadataMap.get(packageSlug);
+		if (packageMetadata === undefined) {
+			throw new Error(`Could not find monorepo package "${specifier}"`);
+		}
+
+		const { packageDirpath, packageJson } = packageMetadata;
+
+		const relativeImportPath = specifier.replace(`@t/${packageSlug}`, '.');
+		const relativeFilePaths =
+			resolveExports(packageJson, relativeImportPath) ?? [];
+
+		if (relativeFilePaths.length > 0) {
+			return {
+				url: pathToFileURL(
+					path.join(packageDirpath, relativeFilePaths[0] as string)
+				).toString(),
+				format: packageJson.type ?? 'commonjs',
+				shortCircuit: true
+			};
+		}
 	}
 
 	// If directory, can be index.js, index.ts, etc.

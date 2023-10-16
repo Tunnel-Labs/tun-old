@@ -15,7 +15,7 @@ async function test(
 	}
 }
 
-console.log('loaded ts-ext-tun/index.tun');
+console.log('loaded ts-ext-tun/index.tsx');
 
 test('has CJS context', () =>
 	typeof require !== 'undefined' || typeof module !== 'undefined');

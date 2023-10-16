@@ -5,12 +5,12 @@ import type { NodeApis } from '../../utils/tun';
 import nodeSupports from '../../utils/node-supports';
 
 export default testSuite(async ({ describe }, node: NodeApis) => {
-	describe('.tun extension', ({ describe }) => {
+	describe('.tsx extension', ({ describe }) => {
 		function assertResults(
 			{ stdout, stderr }: ExecaReturnValue,
 			cjsContext = false
 		) {
-			expect(stdout).toMatch('loaded ts-ext-tun/index.tun');
+			expect(stdout).toMatch('loaded ts-ext-tun/index.tsx');
 			expect(stdout).toMatch(
 				cjsContext ? '✔ has CJS context' : '✖ has CJS context'
 			);

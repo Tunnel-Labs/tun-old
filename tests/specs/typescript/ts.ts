@@ -104,16 +104,16 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 		});
 
 		describe('extensionless with subextension', ({ test }) => {
-			const importPath = './lib/ts-ext-ts/index.tun';
+			const importPath = './lib/ts-ext-ts/index.tsx';
 
 			test('Load', async () => {
 				const nodeProcess = await node.load(importPath);
-				assertResults(nodeProcess, node.isCJS, 'loaded ts-ext-ts/index.tun.ts');
+				assertResults(nodeProcess, node.isCJS, 'loaded ts-ext-ts/index.tsx.ts');
 			});
 
 			test('Import', async () => {
 				const nodeProcess = await node.import(importPath);
-				assertResults(nodeProcess, node.isCJS, 'loaded ts-ext-ts/index.tun.ts');
+				assertResults(nodeProcess, node.isCJS, 'loaded ts-ext-ts/index.tsx.ts');
 				expect(nodeProcess.stdout).toMatch('{"default":1234}');
 			});
 
@@ -121,7 +121,7 @@ export default testSuite(async ({ describe }, node: NodeApis) => {
 				const nodeProcess = await node.require(importPath);
 
 				// By "require()"ing an ESM file, it forces it to be compiled in a CJS context
-				assertResults(nodeProcess, true, 'loaded ts-ext-ts/index.tun.ts');
+				assertResults(nodeProcess, true, 'loaded ts-ext-ts/index.tsx.ts');
 				expect(nodeProcess.stdout).toMatch('{"default":1234}');
 			});
 		});
