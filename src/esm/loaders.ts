@@ -30,7 +30,7 @@ import { getMonorepoDirpath } from 'get-monorepo-root';
 import { exports as resolveExports } from 'resolve.exports';
 import { getPackageSlugToPackageMetadataMap } from '../utils/packages';
 
-const monorepoDirpath = getMonorepoDirpath();
+const monorepoDirpath = getMonorepoDirpath(import.meta.url);
 if (monorepoDirpath === undefined) {
 	throw new Error('Could not find monorepo root');
 }

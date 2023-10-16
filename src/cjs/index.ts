@@ -36,7 +36,7 @@ const tsconfigPathsMatcher = tsconfig && createPathsMatcher(tsconfig);
 
 const applySourceMap = installSourceMapSupport();
 
-const monorepoDirpath = getMonorepoDirpath();
+const monorepoDirpath = getMonorepoDirpath(__dirname);
 if (monorepoDirpath === undefined) {
 	throw new Error('Could not find monorepo root');
 }
