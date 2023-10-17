@@ -9,8 +9,8 @@ dependencies:
     specifier: ~0.18.20
     version: 0.18.20
   get-monorepo-root:
-    specifier: ^1.1.0
-    version: 1.1.0
+    specifier: ^1.2.0
+    version: 1.2.0
   get-tsconfig:
     specifier: ^4.7.2
     version: 4.7.2
@@ -1372,8 +1372,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /get-monorepo-root@1.1.0:
-    resolution: {integrity: sha512-xKYQsKvivJZCIe9DPAok/tgQvAYkfG9Zz4RQ8j0p3xQMJOakOYLJoH5xVSnE3ArfOfE+JGn6kipJ4jGoGAW6Gw==}
+  /get-monorepo-root@1.2.0:
+    resolution: {integrity: sha512-Z25q2/NmtYXneeMfCFZT7+ekp+yWQJOCQe3ZsrhuIEKjLinsNbC6DjYLMdQ3TlQfoJ3l09XIF34hn08j1U+C1g==}
     dependencies:
       pathe: 1.1.1
     dev: false
