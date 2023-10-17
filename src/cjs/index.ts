@@ -17,7 +17,7 @@ import { transformSync, transformDynamicImport } from '../utils/transform';
 import { resolveTsPath } from '../utils/resolve-ts-path';
 import { compareNodeVersion } from '../utils/compare-node-version';
 import { isFileEsmSync } from 'is-file-esm-ts';
-import { getPackageSlugToPackageMetadataMap } from '../utils/packages';
+import { getMonorepoPackages } from 'monorepo-packages';
 import resolve from 'resolve.exports';
 
 const isRelativePathPattern = /^\.{1,2}\//;
@@ -41,7 +41,7 @@ if (monorepoDirpath === undefined) {
 	throw new Error('Could not find monorepo root');
 }
 
-const packageSlugToPackageMetadataMap = getPackageSlugToPackageMetadataMap({
+const monorepoPackages = getMonorepoPackages({
 	monorepoDirpath
 });
 
@@ -223,14 +223,14 @@ Module._resolveFilename = (request, parent, isMain, options) => {
 			);
 		}
 
-		const packageMetadata = packageSlugToPackageMetadataMap.get(packageSlug);
+		const packageMetadata = monorepoPackages[`@-/${packageSlug}`];
 		if (packageMetadata === undefined) {
 			throw new Error(`Could not find monorepo package "${request}"`);
 		}
 
 		const { packageDirpath, packageJson } = packageMetadata;
 
-		const relativeImportPath = request.replace(`@t/${packageSlug}`, '.');
+		const relativeImportPath = request.replace(`@-/${packageSlug}`, '.');
 		const relativeFilePaths =
 			resolve.exports(packageJson, relativeImportPath) ?? [];
 

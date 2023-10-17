@@ -31,6 +31,7 @@
 		"glob-imports": "^3.0.0",
 		"is-file-esm-ts": "^0.1.0",
 		"glob": "^10.3.10",
+		"monorepo-packages": "^1.0.3",
 		"pathe": "^1.1.1",
 		"resolve.exports": "^2.0.2",
 		"source-map-support": "^0.5.21",

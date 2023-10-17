@@ -28,14 +28,14 @@ import { createTildeImportExpander } from 'tilde-imports';
 import { isGlobSpecifier, createGlobfileManager } from 'glob-imports';
 import { getMonorepoDirpath } from 'get-monorepo-root';
 import { exports as resolveExports } from 'resolve.exports';
-import { getPackageSlugToPackageMetadataMap } from '../utils/packages';
+import { getMonorepoPackages } from 'monorepo-packages';
 
 const monorepoDirpath = getMonorepoDirpath(import.meta.url);
 if (monorepoDirpath === undefined) {
 	throw new Error('Could not find monorepo root');
 }
 
-const packageSlugToPackageMetadataMap = getPackageSlugToPackageMetadataMap({
+const monorepoPackages = getMonorepoPackages({
 	monorepoDirpath
 });
 const expandTildeImport = createTildeImportExpander({
@@ -220,14 +220,14 @@ export const resolve: resolve = async function (
 			);
 		}
 
-		const packageMetadata = packageSlugToPackageMetadataMap.get(packageSlug);
+		const packageMetadata = monorepoPackages[`@-/${packageSlug}`];
 		if (packageMetadata === undefined) {
 			throw new Error(`Could not find monorepo package "${specifier}"`);
 		}
 
 		const { packageDirpath, packageJson } = packageMetadata;
 
-		const relativeImportPath = specifier.replace(`@t/${packageSlug}`, '.');
+		const relativeImportPath = specifier.replace(`@-/${packageSlug}`, '.');
 		const relativeFilePaths =
 			resolveExports(packageJson, relativeImportPath) ?? [];
 
