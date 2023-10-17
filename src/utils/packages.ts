@@ -18,35 +18,31 @@ export function getPackageSlugToPackageMetadataMap({
 		);
 	}
 
-	const packageJsonWorkspaces = JSON.parse(
-		fs.readFileSync(packageJsonFilepath, 'utf8')
-	).workspaces;
+	const packageJson = JSON.parse(fs.readFileSync(packageJsonFilepath, 'utf8'));
 
-	if (packageJsonWorkspaces !== undefined) {
-		packageDirpathGlobs = packageJsonWorkspaces;
-	} else {
-		const pnpmWorkspaceFilepath = path.join(
-			monorepoDirpath,
-			'pnpm-workspace.yaml'
-		);
-
-		if (!fs.existsSync(pnpmWorkspaceFilepath)) {
-			throw new Error(
-				`Monorepo package.json does not include "workspaces" property and could not find pnpm-workspace.yaml file at "${pnpmWorkspaceFilepath}"`
-			);
-		}
-
+	if (packageJson.workspaces !== undefined) {
+		packageDirpathGlobs = packageJson.workspaces;
+	} else if (fs.existsSync(path.join(monorepoDirpath, 'pnpm-workspace.yaml'))) {
 		const pnpmWorkspacePackages = yaml.parse(
-			fs.readFileSync(pnpmWorkspaceFilepath, 'utf8')
+			fs.readFileSync(path.join(monorepoDirpath, 'pnpm-workspace.yaml'), 'utf8')
 		)?.packages;
 
 		if (pnpmWorkspacePackages === undefined) {
 			throw new Error(
-				`Monorepo package.json does not include "workspaces" property and could not find "packages" property in pnpm-workspace.yaml file at "${pnpmWorkspaceFilepath}"`
+				`Could not find "packages" property in pnpm-workspace.yaml file at "${path.join(
+					monorepoDirpath,
+					'pnpm-workspace.yaml'
+				)}"`
 			);
 		}
 
 		packageDirpathGlobs = pnpmWorkspacePackages;
+	} else if (packageJson.root) {
+		packageDirpathGlobs = ['.'];
+	} else {
+		throw new Error(
+			`Monorepo package.json does not include "workspaces" property or "root" property and could not locate pnpm-workspace.yaml file in "${monorepoDirpath}"`
+		);
 	}
 
 	const packageJsonFilepathsArray = glob.sync(
