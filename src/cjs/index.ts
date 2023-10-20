@@ -15,7 +15,7 @@ import { getMonorepoDirpath } from 'get-monorepo-root';
 import { installSourceMapSupport } from '../source-map';
 import { transformSync, transformDynamicImport } from '../utils/transform';
 import { resolveTsPath } from '../utils/resolve-ts-path';
-import { compareNodeVersion } from '../utils/compare-node-version';
+import { nodeSupportsImport, supportsNodePrefix } from '../utils/node-features';
 import { isFileEsmSync } from 'is-file-esm-ts';
 import { getMonorepoPackages } from 'monorepo-packages';
 import resolve from 'resolve.exports';
@@ -51,12 +51,6 @@ const expandTildeImport = createTildeImportExpander({
 const { getGlobfileContents, getGlobfilePath } = createGlobfileManager({
 	monorepoDirpath
 });
-
-const nodeSupportsImport =
-	// v13.2.0 and higher
-	compareNodeVersion([13, 2, 0]) >= 0 ||
-	// 12.20.0 ~ 13.0.0
-	(compareNodeVersion([12, 20, 0]) >= 0 && compareNodeVersion([13, 0, 0]) < 0);
 
 const extensions = Module._extensions;
 const defaultLoader = extensions['.js'];
@@ -186,9 +180,6 @@ Object.defineProperty(extensions, '.mjs', {
 	// when CJS loader iterates over the possible extensions
 	enumerable: false
 });
-
-const supportsNodePrefix =
-	compareNodeVersion([16, 0, 0]) >= 0 || compareNodeVersion([14, 18, 0]) >= 0;
 
 const defaultResolveFilename = Module._resolveFilename.bind(Module);
 
