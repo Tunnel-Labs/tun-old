@@ -24,8 +24,8 @@ dependencies:
     specifier: ^0.1.0
     version: 0.1.0
   monorepo-packages:
-    specifier: ^1.0.3
-    version: 1.0.3
+    specifier: ^1.1.0
+    version: 1.1.0
   pathe:
     specifier: ^1.1.1
     version: 1.1.1
@@ -1994,8 +1994,8 @@ packages:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
     dev: true
 
-  /monorepo-packages@1.0.3:
-    resolution: {integrity: sha512-AfKmuI0d5APOyHzuaDcWeJQhcbJUBtLqTPMJhdqOP+ANg0ZcJN7wKQk5riHgyq/DtSf9YLtgoon+ZKKUWzKqeg==}
+  /monorepo-packages@1.1.0:
+    resolution: {integrity: sha512-9jV9Ow78+CALIch/6F44hImcchT72XfatqzHWr9PaYfEEDtaCcdiyYkDyF1mhVNcRngnq+eGZNaBWAa7Sb+10Q==}
     dependencies:
       cjs-require: 1.0.0
       glob: 10.3.10
@@ -2003,7 +2003,7 @@ packages:
       map-obj: 5.0.2
       pathe: 1.1.1
       tiny-invariant: 1.3.1
-      type-fest: 4.4.0
+      type-fest: 4.5.0
       yaml: 2.3.3
     dev: false
 
@@ -2622,7 +2622,7 @@ packages:
   /tilde-imports@3.1.3:
     resolution: {integrity: sha512-xbye/VosVM4sEcrCBaAhQz4cOFkj72XawwuU3z6H8tE0m10jiNd4YJiqBhMTUUcWa7f+RN9qUWWA/vdnIhkcOg==}
     dependencies:
-      monorepo-packages: 1.0.3
+      monorepo-packages: 1.1.0
       pathe: 1.1.1
     dev: false
 
@@ -2675,6 +2675,12 @@ packages:
   /type-fest@4.4.0:
     resolution: {integrity: sha512-HT3RRs7sTfY22KuPQJkD/XjbTbxgP2Je5HPt6H6JEGvcjHd5Lqru75EbrP3tb4FYjNJ+DjLp+MNQTFQU0mhXNw==}
     engines: {node: '>=16'}
+    dev: true
+
+  /type-fest@4.5.0:
+    resolution: {integrity: sha512-diLQivFzddJl4ylL3jxSkEc39Tpw7o1QeEHIPxVwryDK2lpB7Nqhzhuo6v5/Ls08Z0yPSAhsyAWlv1/H0ciNmw==}
+    engines: {node: '>=16'}
+    dev: false
 
   /type-flag@3.0.0:
     resolution: {integrity: sha512-3YaYwMseXCAhBB14RXW5cRQfJQlEknS6i4C8fCfeUdS3ihG9EdccdR9kt3vP73ZdeTGmPb4bZtkDn5XMIn1DLA==}
