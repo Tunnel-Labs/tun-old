@@ -74,7 +74,7 @@ export function transformSync(
 	if (transformed.warnings && transformed.warnings.length > 0) {
 		const { warnings } = transformed;
 		for (const warning of warnings) {
-			console.log(warning);
+			console.error(warning);
 		}
 	}
 
@@ -119,7 +119,7 @@ export async function transform(
 	if (transformed.warnings && transformed.warnings.length > 0) {
 		const { warnings } = transformed;
 		for (const warning of warnings) {
-			console.log(warning);
+			console.error(warning);
 		}
 	}
 
