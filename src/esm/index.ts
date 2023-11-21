@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import { isMainThread } from 'node:worker_threads';
 import { supportsModuleRegister } from '../utils/node-features';
 import { registerLoader } from './register';
+import { isFileEsmSync } from 'is-file-esm-ts';
 
 // Loaded via --import flag
 if (supportsModuleRegister && isMainThread) {
@@ -16,7 +17,15 @@ if (supportsModuleRegister && isMainThread) {
 		path.extname(process.argv[1]) === '' &&
 		fs.existsSync(process.argv[1])
 	) {
-		createRequire(import.meta.url)(process.argv[1]);
+		try {
+			if (isFileEsmSync(process.argv[1])) {
+				import(process.argv[1]);
+			} else {
+				createRequire(import.meta.url)(process.argv[1]);
+			}
+		} catch {
+			createRequire(import.meta.url)(process.argv[1]);
+		}
 	} else {
 		registerLoader();
 	}
